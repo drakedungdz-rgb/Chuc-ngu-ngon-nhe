@@ -24,7 +24,6 @@
             touch-action: none;
         }
 
-        /* === NỀN SAO === */
         .stars {
             position: fixed;
             top: 0;
@@ -51,7 +50,6 @@
             100% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* === BONG BÓNG ÁNH SÁNG === */
         .bubbles-container {
             position: fixed;
             bottom: 0;
@@ -83,7 +81,6 @@
             }
         }
 
-        /* === SAO BĂNG === */
         .shooting-star {
             position: fixed;
             width: 4px;
@@ -118,7 +115,6 @@
             }
         }
 
-        /* === CARD CHÍNH === */
         .card {
             position: relative;
             z-index: 10;
@@ -136,7 +132,6 @@
             transform-style: preserve-3d;
             will-change: transform;
         }
-        /* Viền cầu vồng chuyển động */
         .card::before {
             content: '';
             position: absolute;
@@ -173,6 +168,7 @@
             100% { transform: translateY(0px) rotate(0deg); }
         }
 
+        /* ===== TIÊU ĐỀ - KHÔNG XUỐNG DÒNG ===== */
         .greeting {
             font-size: 2.5rem;
             font-weight: 700;
@@ -180,6 +176,12 @@
             text-shadow: 0 4px 20px rgba(255, 200, 150, 0.3);
             letter-spacing: 1px;
             margin: 0.2rem 0 0.5rem;
+            white-space: nowrap;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.05rem;
         }
         .greeting span {
             display: inline-block;
@@ -276,7 +278,6 @@
             line-height: 1;
         }
 
-        /* === TIM BAY === */
         .heart-float {
             position: fixed;
             pointer-events: none;
@@ -297,7 +298,6 @@
             }
         }
 
-        /* === NÚT BẬT/TẮT ÂM THANH === */
         .sound-toggle {
             position: fixed;
             top: 20px;
@@ -327,25 +327,32 @@
             transform: scale(0.9);
         }
 
-        /* Responsive */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .card {
-                padding: 2rem 1.5rem 2.5rem;
+                padding: 1.5rem 1rem 2rem;
+                border-radius: 40px;
             }
             .greeting {
-                font-size: 2rem;
-            }
-            .message {
-                font-size: 1.1rem;
-                padding: 0.5rem 1.2rem;
-                min-height: 3.6rem;
+                font-size: 1.6rem;
+                letter-spacing: 0.5px;
+                gap: 0.02rem;
             }
             .moon-icon {
                 font-size: 4rem;
             }
+            .message {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+                min-height: 3.2rem;
+            }
             .heart-btn {
-                padding: 0.6rem 1.5rem;
-                font-size: 1.1rem;
+                padding: 0.6rem 1.2rem;
+                font-size: 1rem;
+                gap: 8px;
+            }
+            .heart-btn i {
+                font-size: 1.4rem;
             }
             .sound-toggle {
                 width: 42px;
@@ -354,21 +361,19 @@
                 top: 12px;
                 right: 12px;
             }
+            .sub-message {
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Nút âm thanh -->
     <div class="sound-toggle" id="soundToggle" title="Bật/Tắt nhạc">🔊</div>
 
-    <!-- Sao nền -->
     <div class="stars" id="starsContainer"></div>
-
-    <!-- Bong bóng -->
     <div class="bubbles-container" id="bubblesContainer"></div>
 
-    <!-- Card chính -->
     <div class="card" id="card">
         <div class="moon-icon">🌙</div>
         <div class="greeting">
@@ -402,7 +407,6 @@
         // ================================================================
         let audioCtx = null;
         let isSoundOn = true;
-        let musicInterval = null;
         let musicTimeout = null;
         let isMusicPlaying = false;
         let gainNode = null;
@@ -411,7 +415,7 @@
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 gainNode = audioCtx.createGain();
-                gainNode.gain.value = 0.12; // âm lượng nhạc nền
+                gainNode.gain.value = 0.12;
                 gainNode.connect(audioCtx.destination);
             }
             if (audioCtx.state === 'suspended') {
@@ -419,7 +423,6 @@
             }
         }
 
-        // Phát một nốt nhạc
         function playNote(freq, duration, volume = 0.15, type = 'sine', delay = 0) {
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
@@ -434,7 +437,6 @@
             osc.stop(audioCtx.currentTime + delay + duration);
         }
 
-        // Tiếng ting vui tai
         function playTing() {
             if (!isSoundOn || !audioCtx) return;
             playNote(880, 0.12, 0.12, 'sine');
@@ -443,18 +445,15 @@
             }, 80);
         }
 
-        // Giai điệu nền êm dịu (vòng lặp arpeggio)
         function playBackgroundMusic() {
             if (!isSoundOn || !audioCtx) return;
             if (isMusicPlaying) return;
             isMusicPlaying = true;
 
             const notes = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 440.00, 493.88, 523.25, 587.33, 659.25];
-            // Một số nốt ngẫu nhiên, nhưng vẫn êm tai
             const pattern = [0, 2, 4, 6, 4, 2, 0, 3, 5, 7, 5, 3];
             let step = 0;
-            const bpm = 70;
-            const interval = 60000 / bpm / 2; // mỗi nốt cách nhau ~428ms
+            const interval = 428;
 
             function playNext() {
                 if (!isMusicPlaying || !isSoundOn) {
@@ -468,7 +467,6 @@
                 musicTimeout = setTimeout(playNext, interval);
             }
 
-            // Bắt đầu sau 0.5s
             musicTimeout = setTimeout(playNext, 500);
         }
 
@@ -495,10 +493,8 @@
             }
         }
 
-        // Xử lý nút âm thanh
         document.getElementById('soundToggle').addEventListener('click', toggleSound);
 
-        // Khởi tạo audio khi người dùng tương tác đầu tiên (click bất kỳ đâu)
         function firstInteraction() {
             initAudio();
             if (isSoundOn) {
@@ -511,7 +507,7 @@
         document.addEventListener('touchstart', firstInteraction);
 
         // ================================================================
-        //  KHO LỜI CHÚC NGỦ NGON (30+ câu)
+        //  KHO LỜI CHÚC
         // ================================================================
         const goodnightMessages = [
             "✨ Cả thế giới dịu dàng trong giấc mơ của bạn ✨",
@@ -554,8 +550,6 @@
         // ================================================================
         //  KHỞI TẠO CÁC HIỆU ỨNG
         // ================================================================
-
-        // --- Tạo sao ---
         (function createStars() {
             const container = document.getElementById('starsContainer');
             const count = 140;
@@ -572,7 +566,6 @@
             }
         })();
 
-        // --- Bong bóng ---
         (function createBubbles() {
             const container = document.getElementById('bubblesContainer');
             const count = 20;
@@ -592,7 +585,6 @@
             }
         })();
 
-        // --- Sao băng ---
         function createShootingStar() {
             const star = document.createElement('div');
             star.className = 'shooting-star';
@@ -614,7 +606,6 @@
         setTimeout(() => { createShootingStar(); }, 500);
         setTimeout(() => { createShootingStar(); }, 1500);
 
-        // --- Thả tim ---
         function createFloatingHeart(x, y) {
             const heart = document.createElement('div');
             heart.className = 'heart-float';
@@ -656,13 +647,9 @@
         // ================================================================
         const btn = document.getElementById('sendHearts');
         btn.addEventListener('click', function(e) {
-            // Phát tiếng ting
             playTing();
-
-            // Đổi lời chúc
             changeMessage();
 
-            // Thả tim
             let x = e.clientX || (window.innerWidth / 2);
             let y = e.clientY || (window.innerHeight / 2);
             if (!e.clientX) {
@@ -682,7 +669,6 @@
             setTimeout(() => btn.style.transform = '', 150);
         });
 
-        // Tự động thả tim chào mừng
         window.addEventListener('load', function() {
             setTimeout(() => {
                 const rect = btn.getBoundingClientRect();
@@ -699,7 +685,7 @@
         });
 
         // ================================================================
-        //  NGHIÊNG CARD (Chuột + Cảm biến)
+        //  NGHIÊNG CARD
         // ================================================================
         const card = document.getElementById('card');
         const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
