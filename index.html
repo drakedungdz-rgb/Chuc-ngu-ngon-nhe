@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🌙 Chúc Ngủ Ngon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(145deg, #0b0e2a 0%, #1b1f4f 40%, #2d2b6b 100%);
+            overflow: hidden;
+            position: relative;
+            touch-action: none;
+        }
+
+        /* === NỀN SAO === */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite alternate;
+            width: var(--size);
+            height: var(--size);
+            top: var(--top);
+            left: var(--left);
+            opacity: 0.4;
+            box-shadow: 0 0 8px 2px rgba(255, 255, 200, 0.3);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* === BONG BÓNG ÁNH SÁNG === */
+        .bubbles-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .bubble {
+            position: absolute;
+            bottom: -80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), rgba(255, 200, 230, 0.10));
+            box-shadow: 0 0 30px rgba(255, 180, 220, 0.15);
+            animation: rise linear infinite;
+            will-change: transform, opacity;
+        }
+        @keyframes rise {
+            0% {
+                transform: translateY(0) scale(0.8) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% { opacity: 0.7; }
+            100% {
+                transform: translateY(-110vh) scale(1.2) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* === SAO BĂNG === */
+        .shooting-star {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px 3px rgba(255, 240, 200, 0.8);
+            z-index: 2;
+            pointer-events: none;
+            animation: shoot linear forwards;
+        }
+        .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(to left, rgba(255, 255, 255, 0.8), transparent);
+            transform: translateY(-50%);
+        }
+        @keyframes shoot {
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(0.5);
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), var(--dy)) scale(1);
+            }
+        }
+
+        /* === CARD CHÍNH === */
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 242, 235, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 3rem 4rem 4rem 4rem;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 220, 180, 0.15) inset;
+            border: 1px solid rgba(255, 215, 190, 0.2);
+            transition: box-shadow 0.3s, transform 0.1s ease-out;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        /* Viền cầu vồng chuyển động */
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 62px;
+            padding: 3px;
+            background: conic-gradient(from var(--angle), #ffb6b9, #ffd3b4, #fff7b0, #b5e6c3, #a8d8ea, #d9b8e0, #ffb6b9);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: -1;
+            animation: spinGradient 8s linear infinite;
+        }
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+        @keyframes spinGradient {
+            to { --angle: 360deg; }
+        }
+
+        .moon-icon {
+            font-size: 5.5rem;
+            display: inline-block;
+            animation: floatMoon 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 25px #fde8b3);
+            margin-bottom: 0.2rem;
+        }
+        @keyframes floatMoon {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-14px) rotate(4deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .greeting {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff9f0;
+            text-shadow: 0 4px 20px rgba(255, 200, 150, 0.3);
+            letter-spacing: 1px;
+            margin: 0.2rem 0 0.5rem;
+        }
+        .greeting span {
+            display: inline-block;
+            animation: wave 2s infinite;
+        }
+        .greeting span:nth-child(2) { animation-delay: 0.05s; }
+        .greeting span:nth-child(3) { animation-delay: 0.10s; }
+        .greeting span:nth-child(4) { animation-delay: 0.15s; }
+        .greeting span:nth-child(5) { animation-delay: 0.20s; }
+        .greeting span:nth-child(6) { animation-delay: 0.25s; }
+        .greeting span:nth-child(7) { animation-delay: 0.30s; }
+        .greeting span:nth-child(8) { animation-delay: 0.35s; }
+        .greeting span:nth-child(9) { animation-delay: 0.40s; }
+        .greeting span:nth-child(10) { animation-delay: 0.45s; }
+        .greeting span:nth-child(11) { animation-delay: 0.50s; }
+        .greeting span:nth-child(12) { animation-delay: 0.55s; }
+        .greeting span:nth-child(13) { animation-delay: 0.60s; }
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .message {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffefe2;
+            background: rgba(255, 215, 190, 0.1);
+            padding: 0.8rem 1.5rem;
+            border-radius: 100px;
+            display: inline-block;
+            backdrop-filter: blur(4px);
+            margin: 0.5rem 0 1.5rem;
+            border: 1px solid rgba(255, 215, 190, 0.2);
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: opacity 0.4s ease;
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .message i {
+            font-style: normal;
+            display: inline-block;
+            animation: sparkle 2s infinite;
+        }
+        @keyframes sparkle {
+            0% { opacity: 0.6; text-shadow: 0 0 0 #ffe3b0; }
+            50% { opacity: 1; text-shadow: 0 0 20px #ffe3b0, 0 0 40px #fdbc7a; }
+            100% { opacity: 0.6; text-shadow: 0 0 0 #ffe3b0; }
+        }
+
+        .sub-message {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #d6d0f0;
+            background: rgba(0,0,0,0.15);
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            margin-bottom: 1.8rem;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            letter-spacing: 0.3px;
+        }
+
+        .heart-btn {
+            background: #ffb6b9;
+            border: none;
+            border-radius: 60px;
+            padding: 0.8rem 2.2rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d1b3d;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 100, 120, 0.4);
+            transition: 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+        .heart-btn:hover {
+            transform: scale(1.05) translateY(-3px);
+            background: #ffc8cb;
+            box-shadow: 0 15px 35px rgba(255, 80, 100, 0.6);
+        }
+        .heart-btn:active {
+            transform: scale(0.95);
+        }
+        .heart-btn i {
+            font-size: 1.7rem;
+            line-height: 1;
+        }
+
+        /* === TIM BAY === */
+        .heart-float {
+            position: fixed;
+            pointer-events: none;
+            font-size: 2rem;
+            z-index: 999;
+            animation: floatUp 2.8s ease-out forwards;
+            color: #ffb0b8;
+            text-shadow: 0 0 25px #ff8a9e, 0 0 50px #ff6f87;
+        }
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.5) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-350px) scale(1.8) rotate(40deg);
+            }
+        }
+
+        /* === NÚT BẬT/TẮT ÂM THANH === */
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transition: 0.2s;
+            user-select: none;
+        }
+        .sound-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .sound-toggle:active {
+            transform: scale(0.9);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .card {
+                padding: 2rem 1.5rem 2.5rem;
+            }
+            .greeting {
+                font-size: 2rem;
+            }
+            .message {
+                font-size: 1.1rem;
+                padding: 0.5rem 1.2rem;
+                min-height: 3.6rem;
+            }
+            .moon-icon {
+                font-size: 4rem;
+            }
+            .heart-btn {
+                padding: 0.6rem 1.5rem;
+                font-size: 1.1rem;
+            }
+            .sound-toggle {
+                width: 42px;
+                height: 42px;
+                font-size: 1.4rem;
+                top: 12px;
+                right: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nút âm thanh -->
+    <div class="sound-toggle" id="soundToggle" title="Bật/Tắt nhạc">🔊</div>
+
+    <!-- Sao nền -->
+    <div class="stars" id="starsContainer"></div>
+
+    <!-- Bong bóng -->
+    <div class="bubbles-container" id="bubblesContainer"></div>
+
+    <!-- Card chính -->
+    <div class="card" id="card">
+        <div class="moon-icon">🌙</div>
+        <div class="greeting">
+            <span>🌸</span>
+            <span>C</span><span>h</span><span>ú</span><span>c</span>
+            <span>&nbsp;</span>
+            <span>N</span><span>g</span><span>ủ</span>
+            <span>&nbsp;</span>
+            <span>N</span><span>g</span><span>o</span><span>n</span>
+            <span>🌙</span>
+        </div>
+
+        <div class="message" id="messageBox">
+            <i id="messageText">✨ Cả thế giới dịu dàng trong giấc mơ của bạn ✨</i>
+        </div>
+        <div class="sub-message">
+            💤 Ngủ thật ngon nhé, mai lại vui tươi! 💤
+        </div>
+
+        <button class="heart-btn" id="sendHearts">
+            <i>💖</i> Gửi tim + lời chúc mới <i>💖</i>
+        </button>
+        <div style="margin-top: 1.5rem; font-size: 0.9rem; color: #b7ade0; letter-spacing: 1px; opacity: 0.7;">
+            ✦ nhấn tim để thả yêu thương ✦
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  ÂM THANH (Web Audio API)
+        // ================================================================
+        let audioCtx = null;
+        let isSoundOn = true;
+        let musicInterval = null;
+        let musicTimeout = null;
+        let isMusicPlaying = false;
+        let gainNode = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                gainNode = audioCtx.createGain();
+                gainNode.gain.value = 0.12; // âm lượng nhạc nền
+                gainNode.connect(audioCtx.destination);
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Phát một nốt nhạc
+        function playNote(freq, duration, volume = 0.15, type = 'sine', delay = 0) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime + delay);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+            osc.connect(gain);
+            gain.connect(gainNode);
+            osc.start(audioCtx.currentTime + delay);
+            osc.stop(audioCtx.currentTime + delay + duration);
+        }
+
+        // Tiếng ting vui tai
+        function playTing() {
+            if (!isSoundOn || !audioCtx) return;
+            playNote(880, 0.12, 0.12, 'sine');
+            setTimeout(() => {
+                playNote(1100, 0.1, 0.08, 'sine');
+            }, 80);
+        }
+
+        // Giai điệu nền êm dịu (vòng lặp arpeggio)
+        function playBackgroundMusic() {
+            if (!isSoundOn || !audioCtx) return;
+            if (isMusicPlaying) return;
+            isMusicPlaying = true;
+
+            const notes = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 440.00, 493.88, 523.25, 587.33, 659.25];
+            // Một số nốt ngẫu nhiên, nhưng vẫn êm tai
+            const pattern = [0, 2, 4, 6, 4, 2, 0, 3, 5, 7, 5, 3];
+            let step = 0;
+            const bpm = 70;
+            const interval = 60000 / bpm / 2; // mỗi nốt cách nhau ~428ms
+
+            function playNext() {
+                if (!isMusicPlaying || !isSoundOn) {
+                    isMusicPlaying = false;
+                    return;
+                }
+                const idx = pattern[step % pattern.length];
+                const freq = notes[idx];
+                playNote(freq, 0.35, 0.07, 'sine');
+                step++;
+                musicTimeout = setTimeout(playNext, interval);
+            }
+
+            // Bắt đầu sau 0.5s
+            musicTimeout = setTimeout(playNext, 500);
+        }
+
+        function stopBackgroundMusic() {
+            isMusicPlaying = false;
+            if (musicTimeout) {
+                clearTimeout(musicTimeout);
+                musicTimeout = null;
+            }
+        }
+
+        function toggleSound() {
+            initAudio();
+            isSoundOn = !isSoundOn;
+            const toggle = document.getElementById('soundToggle');
+            if (isSoundOn) {
+                toggle.textContent = '🔊';
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                playBackgroundMusic();
+            } else {
+                toggle.textContent = '🔇';
+                stopBackgroundMusic();
+                if (audioCtx && audioCtx.state === 'running') audioCtx.suspend();
+            }
+        }
+
+        // Xử lý nút âm thanh
+        document.getElementById('soundToggle').addEventListener('click', toggleSound);
+
+        // Khởi tạo audio khi người dùng tương tác đầu tiên (click bất kỳ đâu)
+        function firstInteraction() {
+            initAudio();
+            if (isSoundOn) {
+                playBackgroundMusic();
+            }
+            document.removeEventListener('click', firstInteraction);
+            document.removeEventListener('touchstart', firstInteraction);
+        }
+        document.addEventListener('click', firstInteraction);
+        document.addEventListener('touchstart', firstInteraction);
+
+        // ================================================================
+        //  KHO LỜI CHÚC NGỦ NGON (30+ câu)
+        // ================================================================
+        const goodnightMessages = [
+            "✨ Cả thế giới dịu dàng trong giấc mơ của bạn ✨",
+            "🌙 Ngủ ngon nhé, mai sẽ là một ngày tuyệt vời!",
+            "💤 Gửi bạn một giấc mơ đẹp như ánh trăng rằm.",
+            "⭐ Đêm nay, những vì sao sẽ canh giấc ngủ của bạn.",
+            "🌸 Hoa cũng khép cánh, bạn hãy an nhiên chìm vào giấc ngủ.",
+            "🌜 Mơ thấy những điều ngọt ngào nhất nhé!",
+            "💖 Tối nay không có ác mộng, chỉ có thiên đường trong mơ.",
+            "✨ Để nỗi muộn phiền tan theo màn đêm, ngày mai bình minh sẽ tươi sáng hơn.",
+            "😴 Nhắm mắt lại, thả lỏng, giấc mơ đang chờ đón bạn.",
+            "🍃 Gió đêm thì thầm lời ru, ngủ ngon nhé.",
+            "🌙 Trăng non sẽ gửi đến bạn một giấc mơ hồng.",
+            "💤 Ngủ như một chú gấu con, sáng mai bừng tỉnh với năng lượng tràn đầy.",
+            "✨ Hãy mơ về biển, về trời, về những điều làm bạn mỉm cười.",
+            "🌸 Mỗi giấc mơ đều là một chuyến phiêu lưu kỳ thú.",
+            "⭐ Đếm sao thay vì đếm cừu, rồi ngủ thiếp đi lúc nào không hay.",
+            "🌙 Gửi vầng trăng vàng tới bên cửa sổ, thay lời chúc ngủ ngon.",
+            "😊 Ngày mai sẽ có thêm nhiều niềm vui, nhưng trước hết hãy ngủ ngon.",
+            "💖 Ngủ ngon, người đẹp mơ màng! (dành tặng riêng bạn)",
+            "🌜 Giấc mơ êm đềm như làn nước mùa thu.",
+            "✨ Đêm đến, gửi đi những lo âu, đón nhận bình yên.",
+            "🌸 Ngủ đi, để hồn được nghỉ ngơi và trái tim được thư thái.",
+            "⭐ Cầu mong bạn có một giấc ngủ thật sâu và thức dậy với nụ cười.",
+            "🌙 Ánh trăng sẽ soi đường cho giấc mơ của bạn.",
+            "💤 Ngủ ngon nhé, tôi luôn nghĩ về bạn ngay cả khi mơ.",
+            "💖 Một ngày dài đã qua, hãy để bản thân được chăm sóc bằng giấc ngủ.",
+            "✨ Tối nay, các vì sao sẽ hát ru bạn ngủ.",
+            "🌸 Mơ về một thế giới chỉ có hoa và nắng.",
+            "😴 Thả trôi vào giấc ngủ như chiếc lá nhẹ trôi dòng.",
+            "⭐ Những giấc mơ ngọt ngào sẽ đến với bạn như một món quà.",
+            "🌙 Ngủ ngon và cảm nhận sự bình yên trong từng hơi thở.",
+            "💤 Chẳng có gì đẹp hơn một giấc ngủ trọn vẹn sau một ngày vất vả.",
+            "🌸 Hãy nghĩ về những điều tốt đẹp trước khi chìm vào giấc ngủ.",
+            "✨ Một ngày mới sẽ đến, nhưng trước mắt, hãy tận hưởng giấc ngủ.",
+            "🌙 Đêm nay, bạn là nhân vật chính của một câu chuyện cổ tích.",
+            "💖 Ngủ ngon nhé, vì tôi sẽ mơ về bạn."
+        ];
+
+        // ================================================================
+        //  KHỞI TẠO CÁC HIỆU ỨNG
+        // ================================================================
+
+        // --- Tạo sao ---
+        (function createStars() {
+            const container = document.getElementById('starsContainer');
+            const count = 140;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 4 + 2;
+                star.style.setProperty('--size', size + 'px');
+                star.style.setProperty('--top', Math.random() * 100 + '%');
+                star.style.setProperty('--left', Math.random() * 100 + '%');
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(star);
+            }
+        })();
+
+        // --- Bong bóng ---
+        (function createBubbles() {
+            const container = document.getElementById('bubblesContainer');
+            const count = 20;
+            for (let i = 0; i < count; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = 30 + Math.random() * 60;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = (12 + Math.random() * 18) + 's';
+                bubble.style.animationDelay = (Math.random() * 20) + 's';
+                const hue = 300 + Math.random() * 60;
+                bubble.style.background = `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), hsla(${hue}, 70%, 70%, 0.12))`;
+                bubble.style.boxShadow = `0 0 40px hsla(${hue}, 60%, 70%, 0.15)`;
+                container.appendChild(bubble);
+            }
+        })();
+
+        // --- Sao băng ---
+        function createShootingStar() {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+            const x = Math.random() * 80 + 10;
+            const y = Math.random() * 40 + 5;
+            star.style.left = x + '%';
+            star.style.top = y + '%';
+            const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.8;
+            const distance = 300 + Math.random() * 400;
+            const dx = Math.cos(angle) * distance;
+            const dy = Math.sin(angle) * distance;
+            star.style.setProperty('--dx', dx + 'px');
+            star.style.setProperty('--dy', dy + 'px');
+            star.style.animationDuration = (0.8 + Math.random() * 1.2) + 's';
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 3000);
+        }
+        setInterval(() => { if (Math.random() < 0.4) createShootingStar(); }, 4000);
+        setTimeout(() => { createShootingStar(); }, 500);
+        setTimeout(() => { createShootingStar(); }, 1500);
+
+        // --- Thả tim ---
+        function createFloatingHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.className = 'heart-float';
+            const emojis = ['❤️', '💖', '💗', '💓', '🌸', '✨', '🌙', '⭐', '💕', '🌟'];
+            heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            heart.style.fontSize = (Math.random() * 28 + 20) + 'px';
+            heart.style.animationDuration = (2.2 + Math.random() * 1.2) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3500);
+        }
+
+        // ================================================================
+        //  LỜI CHÚC – HIỂN THỊ NGẪU NHIÊN
+        // ================================================================
+        const messageTextEl = document.getElementById('messageText');
+        let currentMessageIndex = -1;
+
+        function changeMessage() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * goodnightMessages.length);
+            } while (newIndex === currentMessageIndex && goodnightMessages.length > 1);
+            currentMessageIndex = newIndex;
+            const box = document.getElementById('messageBox');
+            box.style.opacity = '0.4';
+            setTimeout(() => {
+                messageTextEl.textContent = goodnightMessages[currentMessageIndex];
+                box.style.opacity = '1';
+            }, 250);
+        }
+
+        setTimeout(() => { changeMessage(); }, 300);
+        setInterval(changeMessage, 8000);
+
+        // ================================================================
+        //  XỬ LÝ NÚT TIM
+        // ================================================================
+        const btn = document.getElementById('sendHearts');
+        btn.addEventListener('click', function(e) {
+            // Phát tiếng ting
+            playTing();
+
+            // Đổi lời chúc
+            changeMessage();
+
+            // Thả tim
+            let x = e.clientX || (window.innerWidth / 2);
+            let y = e.clientY || (window.innerHeight / 2);
+            if (!e.clientX) {
+                const rect = btn.getBoundingClientRect();
+                x = rect.left + rect.width / 2;
+                y = rect.top + rect.height / 2;
+            }
+            const count = 18 + Math.floor(Math.random() * 14);
+            for (let i = 0; i < count; i++) {
+                const offsetX = (Math.random() - 0.5) * 320;
+                const offsetY = (Math.random() - 0.5) * 220 - 30;
+                setTimeout(() => {
+                    createFloatingHeart(x + offsetX, y + offsetY);
+                }, i * 50);
+            }
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = '', 150);
+        });
+
+        // Tự động thả tim chào mừng
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const rect = btn.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        const x = cx + (Math.random() - 0.5) * 250;
+                        const y = cy + (Math.random() - 0.5) * 180 - 30;
+                        createFloatingHeart(x, y);
+                    }, i * 100 + 400);
+                }
+            }, 700);
+        });
+
+        // ================================================================
+        //  NGHIÊNG CARD (Chuột + Cảm biến)
+        // ================================================================
+        const card = document.getElementById('card');
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (!isMobile) {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 25;
+                const rotateY = (centerX - x) / 25;
+                this.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg)';
+            });
+        } else {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
+                    })
+                    .catch(() => {});
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+
+            function handleOrientation(event) {
+                const beta = event.beta;
+                const gamma = event.gamma;
+                if (beta === null || gamma === null) return;
+                const maxRotate = 18;
+                const rotateX = Math.max(-maxRotate, Math.min(maxRotate, beta * 0.6));
+                const rotateY = Math.max(-maxRotate, Math.min(maxRotate, gamma * 0.8));
+                card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            }
+        }
+    </script>
+</body>
+</html>
